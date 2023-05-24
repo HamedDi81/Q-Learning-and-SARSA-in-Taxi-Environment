@@ -1,5 +1,6 @@
 import gym
 import numpy as np
+import matplotlib.pyplot as plt
 
 env = gym.make('Taxi-v3') # I used version 0.21.0.
 
@@ -49,3 +50,28 @@ for i in range(num_episodes):
                 returns[(s, a)] = [G]
             counts[(s, a)] = counts.get((s, a), 0) + 1
             Q[s][a] = np.mean(returns[(s, a)])
+
+#Calculating the cumulative reward for each episode
+Rewards = []
+Episode = []
+cumulative_reward = 0
+state = env.reset()
+done = False
+
+for ep in range (100):
+    cumulative_reward = 0
+    state = env.reset()
+    done = False
+    while not done:
+        action = np.argmax(Q[state])
+        next_state, reward, done, info = env.step(action)
+        state = next_state
+        cumulative_reward += reward
+    Rewards.append(cumulative_reward)
+    Episode.append(ep)
+
+plt.plot(Episode, Rewards)
+plt.xlabel('Episode')
+plt.ylabel('Cumulative Reward')
+plt.title('Q-Learning Performance')
+plt.show()

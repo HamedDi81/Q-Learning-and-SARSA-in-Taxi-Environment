@@ -73,5 +73,5 @@ for ep in range (100):
 plt.plot(Episode, Rewards)
 plt.xlabel('Episode')
 plt.ylabel('Cumulative Reward')
-plt.title('Q-Learning Performance')
+plt.title('MC First Visit Control Performance')
 plt.show()

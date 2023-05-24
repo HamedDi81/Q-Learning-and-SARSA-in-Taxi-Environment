@@ -4,7 +4,64 @@ import matplotlib.pyplot as plt
 
 env = gym.make('Taxi-v3') # I used version 0.21.0.
 
+#0 -> Down
+#1 -> Up
+#2 -> Right
+#3 -> left
+#4 -> Pickup
+#5 -> Drop
+#6 -> Up-East
+#7 -> Up- West
+#8 -> Down- East
+#9 -> Down- West
+class ExtraActionWrapper(gym.Wrapper):
+    def __init__(self, env):
+        super().__init__(env)
+        self.action_space = gym.spaces.Discrete(9)
+        self.taxi_row, self.taxi_col, self.pass_idx, self.dest_idx = self.env.env.decode(self.env.env.s)
+        self.state = self.env.env.encode(self.taxi_row, self.taxi_col, self.pass_idx, self.dest_idx)
 
+    def step(self, action):
+        # Map new actions to existing actions
+        if action == 6:  # Up-East
+            next_state, reward, done, info = self.env.step(1)
+            if  self.state == next_state:
+                return next_state, reward, done, info
+            two_next_state, reward, done, info = self.env.step(2)
+            if next_state == two_next_state:
+                i,j,k,d=self.env.step(0)
+                return i,j,k,d
+            return two_next_state, reward, done, info
+        elif action == 7:  # Up-West
+            next_state, reward, done, info = self.env.step(1)
+            if  self.state == next_state:
+                return  next_state, reward, done, info
+            two_next_state, reward, done, info = self.env.step(3)
+            if next_state == two_next_state:
+                i,j,k,d = self.env.step(0)
+                return i,j,k,d
+            return two_next_state, reward, done, info
+        elif action == 8:  # Down-East
+            next_state, reward, done, info = self.env.step(0)
+            if  self.state == next_state:
+                return next_state, reward, done, info
+            two_next_state, reward, done, info = self.env.step(2)
+            if next_state == two_next_state:
+                i,j,k,d = self.env.step(1)
+                return i,j,k,d
+            return two_next_state, reward, done, info
+        elif action == 9:  # Down-West
+            next_state, reward, done, info = self.env.step(0)
+            if  self.state == next_state:
+                return next_state, reward, done, info
+            two_next_state, reward, done, info = self.env.step(3)
+            if next_state == two_next_state:
+                i,j,k,d = self.env.step(1)
+            return two_next_state, reward, done, info
+        else:
+            return self.env.step(action)
+        
+env = ExtraActionWrapper(env)
 # Initialize the Q table
 num_states = env.observation_space.n
 num_actions = env.action_space.n

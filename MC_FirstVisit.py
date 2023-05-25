@@ -79,7 +79,7 @@ def policy(observation, epsilon):
         return np.argmax(Q[observation])
 
 # Set hyperparameters
-num_episodes = 100000
+num_episodes = 1000
 epsilon = 0.1
 discount_factor = 0.9
 

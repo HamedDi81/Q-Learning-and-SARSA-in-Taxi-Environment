@@ -18,7 +18,7 @@ env = gym.make('Taxi-v3') # I used version 0.21.0.
 class ExtraActionWrapper(gym.Wrapper):
     def __init__(self, env):
         super().__init__(env)
-        self.action_space = gym.spaces.Discrete(9)
+        self.action_space = gym.spaces.Discrete(10)
         self.taxi_row, self.taxi_col, self.pass_idx, self.dest_idx = self.env.env.decode(self.env.env.s)
         self.state = self.env.env.encode(self.taxi_row, self.taxi_col, self.pass_idx, self.dest_idx)
 
@@ -69,7 +69,7 @@ q_table = np.zeros([env.observation_space.n, env.action_space.n])
 
 # set hyperparameters
 alpha = 0.1
-gamma = 0.99
+gamma = 0
 epsilon = 0.1
 num_episodes = 100000
 
@@ -121,5 +121,5 @@ for ep in range (100):
 plt.plot(episode, rewards)
 plt.xlabel('Episode')
 plt.ylabel('Cumulative Reward')
-plt.title('Q-Learning Performance')
+plt.title('َُSARSA Performance')
 plt.show()

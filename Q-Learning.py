@@ -66,12 +66,15 @@ env = ExtraActionWrapper(env)
 # initialize the Q-table to zeros
 q_table = np.zeros([env.observation_space.n, env.action_space.n])
 
-# set hyperparameters
+# set hyperparameter
 alpha = 0.1
 gamma = 0.9
 epsilon = 0.1
-num_episodes = 100000
-
+num_episodes = 10000
+# Saving reward and episode for calculating cumulative reward
+rewards = []
+episode = []
+cumulative_reward = 0
 # define the epsilon-greedy policy
 def epsilon_greedy(state):
     if np.random.uniform(0, 1) < epsilon:
@@ -81,9 +84,10 @@ def epsilon_greedy(state):
     return action
 
 # run the Q-learning algorithm
-for i in range(num_episodes):
+for epi in range(num_episodes):
     state = env.reset()
     done = False
+    cumulative_reward = 0
     
     while not done:
         # choose an action using the epsilon-greedy policy
@@ -91,30 +95,35 @@ for i in range(num_episodes):
         
         # take the chosen action and observe the next state and reward
         next_state, reward, done, info = env.step(action)
+        cumulative_reward += reward
         
         # update the Q-value for the current state and action
         q_table[state][action] += alpha * (reward + gamma * max(q_table[next_state]) - q_table[state][action])
         
         state = next_state
 
-# Calculating the cumulative reward for each episode
-rewards = []
-episode = []
-cumulative_reward = 0
-state = env.reset()
-done = False
-
-for ep in range (100):
-    cumulative_reward = 0
-    state = env.reset()
-    done = False
-    while not done:
-        action = np.argmax(q_table[state])
-        next_state, reward, done, info = env.step(action)
-        state = next_state
-        cumulative_reward += reward
     rewards.append(cumulative_reward)
-    episode.append(ep)
+    episode.append(epi)
+
+'''
+Calculating the cumulative reward for each episode after the agent has been trained.
+You can run the following code to see how well the agent performs after learning Q-values using Q-learning.
+'''
+
+# state = env.reset()
+# done = False
+
+# for ep in range (100):
+#     cumulative_reward = 0
+#     state = env.reset()
+#     done = False
+#     while not done:
+#         action = np.argmax(q_table[state])
+#         next_state, reward, done, info = env.step(action)
+#         state = next_state
+#         cumulative_reward += reward
+#     rewards.append(cumulative_reward)
+#     episode.append(ep)
 
 plt.plot(episode, rewards)
 plt.xlabel('Episode')
